@@ -3,23 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Mi Amor ❤️</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tienes un mensaje especial... 💌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff477e;
+            --bg-gradient: linear-gradient(135deg, #ffc2d1, #ffe5ec);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* --- TRUCO PRO: REPRODUCTOR DE YOUTUBE OCULTO --- */
+        #reproductor-youtube {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            left: -9999px; /* Lo mandamos fuera de la pantalla para que no se vea */
+            opacity: 0;
+        }
+
+        /* --- PANTALLA 1: EL SOBRE CERRADO --- */
+        #envelope-screen {
+            text-align: center;
+            z-index: 10;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .envelope-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 100%;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            border: 2px dashed #ff99ac;
+        }
+
+        .envelope-icon {
+            font-size: 80px;
+            margin-bottom: 10px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .envelope-box:hover .envelope-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .open-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .open-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- PANTALLA 2: LA CARTA ABIERTA --- */
+        #letter-screen {
+            display: none;
+            opacity: 0;
+            max-width: 550px;
+            width: 100%;
+            z-index: 5;
+            transition: opacity 1s ease;
+        }
+
+        .letter-card {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .message-text {
+            font-size: 1.05rem;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        /* Lista de Razones */
+        .reasons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .reason-item {
+            background: #fff0f3;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+            font-size: 0.95rem;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reason-icon {
+            font-size: 1.3rem;
+        }
+
+        .floating-heart {
+            position: fixed;
+            bottom: -10vh;
+            font-size: 20px;
+            z-index: 1;
+            pointer-events: none;
+            animation: floatUp infinite linear;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="card-container">
-        
-        <div class="cloud top-cloud"></div>
-        <div class="cloud bottom-cloud"></div>
+    <!-- Aquí está el reproductor oculto (no se ve en la pantalla) -->
+    <iframe id="reproductor-youtube" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-        <div class="center-box">
-            I Love You ❤️
+    <!-- PANTALLA 1: EL SOBRE -->
+    <div id="envelope-screen">
+        <div class="envelope-box" onclick="abrirCarta()">
+            <div class="envelope-icon">💌</div>
+            <h2 style="color: #333; margin-bottom: 5px;">¡Tienes una carta nueva!</h2>
+            <p style="color: #666; font-size: 0.9rem;">Alguien preparó una sorpresa para ti...</p>
+            <button class="open-btn">Abrir Sobre ✨</button>
         </div>
-
-        <div class="floating-container" id="floatingContainer"></div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- PANTALLA 2: LA CARTA ABIERTA -->
+    <div id="letter-screen">
+        <div class="letter-card">
+            <h1>Para Ti, Mi Amor ❤️</h1>
+            <p class="message-text">
+                Desde que llegaste a mi vida, todo tiene un color diferente y bonito. Hice este pequeño detalle, se que no es la gran cosa, pero quería recordarte lo especial que eres para mí y lo mucho que te quiero. Cada momento contigo es un tesoro que guardo en mi corazón.:
+            </p>
+
+            <div class="reasons-container">
+                <div class="reason-item">
+                    <span class="reason-icon">🌸</span>
+                    <span>Por tu forma de ser, que siempre me da paz y me hace sonreír.</span>
+                </div>
+                <div class="reason-item">
+                    <span class="reason-icon">✨</span>
+                    <span>Porque las horas contigo se me pasan volando como si fueran segundos.</span>
+                </div>
+                <div class="reason-item">
+                    <span class="reason-icon">💖</span>
+                    <span>Porque quiero quedarme a tu lado y ser tu persona favorita siempre.</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; font-weight: 600; color: var(--primary); font-size: 1.2rem;">
+                ¡Te amo muchisimo mi hermosa mujer! ♾️
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirCarta() {
+            const envelope = document.getElementById('envelope-screen');
+            const letter = document.getElementById('letter-screen');
+            const reproductor = document.getElementById('reproductor-youtube');
+
+            // 1. AQUÍ ESTÁ EL MAGIA: Le inyectamos el video de "Volví a Nacer" y le decimos que arranque ya (autoplay=1)
+            // Usamos un ID oficial de YouTube del tema de Carlos Vives
+            reproductor.src = "https://www.youtube-nocookie.com/embed/8-z1p-oA3V8?autoplay=1";
+
+            // 2. Desaparece el sobre
+            envelope.style.opacity = '0';
+            envelope.style.transform = 'scale(0.8)';
+            
+            setTimeout(() => {
+                envelope.style.display = 'none';
+                
+                // 3. Muestra la carta romántica
+                letter.style.display = 'block';
+                setTimeout(() => {
+                    letter.style.opacity = '1';
+                }, 50);
+
+                // 4. Suelta la lluvia de corazones
+                iniciarLluvia();
+            }, 800);
+        }
+
+        function crearCorazon() {
+            const corazon = document.createElement('div');
+            corazon.classList.add('floating-heart');
+            
+            const emojis = ['❤️', '💖', '🌸', '✨', '💘', '🌹'];
+            corazon.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            corazon.style.left = Math.random() * 100 + "vw";
+            corazon.style.fontSize = (Math.random() * 20 + 15) + "px";
+            
+            const duracion = Math.random() * 3 + 3;
+            corazon.style.animationDuration = duracion + "s";
+            
+            document.body.appendChild(corazon);
+
+            setTimeout(() => {
+                corazon.remove();
+            }, duracion * 1000);
+        }
+
+        function iniciarLluvia() {
+            setInterval(crearCorazon, 250);
+        }
+    </script>
 </body>
 </html>
